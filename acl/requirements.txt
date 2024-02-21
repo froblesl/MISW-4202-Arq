@@ -1,8 +1,0 @@
-Flask
-flask-marshmallow
-Flask-RESTful
-Flask-SQLAlchemy
-SQLAlchemy
-marshmallow-sqlalchemy
-flask-jwt-extended
-pyopenssl
