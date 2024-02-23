@@ -18,8 +18,8 @@ subir ambiente virtualizado en dos consolas diferentes
 
 source venv/bin/activate  
 
-correr en ambiente virtualizado en la carpeta flaskr: flask run
-correr en otra terminal en la raíz del proyecto: celery -A flaskr.tasks worker --loglevel=info -Q signin_task
+correr en ambiente virtualizado en la carpeta flaskr: gunicorn -w 25 -b :5000 flaskr.app:app
+correr en otra terminal en la raíz del proyecto: celery -A flaskr.tasks worker --loglevel=info -Q signin_task -c1
 
 validar que redis y nginx esten corriendo
 
