@@ -74,7 +74,7 @@ nginx -s reload
 
 En Mac:
 ```bash
-brew services start nginx
+brew services restart nginx
 ```
 
 Asegurarse que el servicio de redis este corriendo.
@@ -82,7 +82,7 @@ Asegurarse que el servicio de nginx este corriendo.
 
 ## Ejecución
 
-Para ejecutar el proyecto se debe correr el siguiente comando en la carpeta flaskr (para e caso del ejemplo se esta corriendo con 50 hilos, la cantidad de hilos definida depende de la capacidad de la maquina donde se va a ejecutar el proyecto):
+Para ejecutar el proyecto se debe correr el siguiente comando en la raíz del proyecto (para e caso del ejemplo se esta corriendo con 50 hilos, la cantidad de hilos definida depende de la capacidad de la maquina donde se va a ejecutar el proyecto):
 
 ```bash
 gunicorn -w 50 -b :5000 flaskr.app:app
