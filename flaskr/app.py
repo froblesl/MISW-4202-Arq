@@ -1,7 +1,7 @@
 from flaskr import create_app
 from flask_restful import Api
 from flaskr.modelos import db
-from flaskr.vistas import VistaSignIn
+from flaskr.vistas import VistaSignIn, VistaHealthCheck
 from flaskr.tasks import signin_task
 
 app = create_app('default')
@@ -13,3 +13,4 @@ db.create_all()
 
 api = Api(app)
 api.add_resource(VistaSignIn, '/signin')
+api.add_resource(VistaHealthCheck, '/health-check')

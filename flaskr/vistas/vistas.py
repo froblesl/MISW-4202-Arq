@@ -1,5 +1,5 @@
 import base64
-from flask import request
+from flask import request, json, Response
 from ..modelos import db, Usuario, UsuarioSchema
 from flask_restful import Resource
 from datetime import datetime
@@ -24,3 +24,7 @@ class VistaSignIn(Resource):
 
         return {"mensaje": "La solicitud de inicio de sesión ha sido enviada y se está procesando."}, 202
 
+class VistaHealthCheck(Resource): #### MONITOREO DE LA APLICACIÓN ####
+    def get(self):
+        data = {"Status": "La aplicación está en línea y funciona correctamente."}
+        return Response(json.dumps(data), 200, mimetype='application/json')
