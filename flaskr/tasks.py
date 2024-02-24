@@ -7,9 +7,7 @@ celery_app = Celery(__name__, broker='redis://localhost:6379/0')
 
 @celery_app.task(name='signin_task', autoretry_for=(Exception,), retry_backoff=True, max_retries=5)
 def signin_task(usuario, password, nombre, telefono, correo):
-    app = create_app('default')
-    db.init_app(app)
-    with app.app_context():
+    with create_app().app_context():
         try:
             nuevo_usuario = Usuario(usuario=usuario,
                                     password=password,
