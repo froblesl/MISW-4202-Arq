@@ -1,8 +1,9 @@
 # app.py
 
-from flaskr import create_app, db
+from flaskr import create_app
 from flask_restful import Api
 from flaskr.vistas import VistaSignIn
+from flaskr.modelos import db
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import (
@@ -12,7 +13,7 @@ from opentelemetry.sdk.trace.export import (
 
 import uptrace
 
-app = create_app()
+app = create_app('default')
 app_context = app.app_context()
 app_context.push()
 
