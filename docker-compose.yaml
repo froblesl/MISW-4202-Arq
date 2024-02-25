@@ -4,18 +4,6 @@ services:
     image: redis
     volumes: 
       - ./data:/data
-  acl-queries:
-    volumes:
-        - ./acl/:/mnt/
-    build: ./acl
-    working_dir: /backend/
-    command: sh run.sh
-  jwt-queries:
-    volumes:
-        - ./jwt/:/mnt/
-    build: ./jwt
-    working_dir: /backend/
-    command: sh run.sh
   users-commands:
     volumes:
         - ./usuarios/:/mnt/
@@ -24,15 +12,6 @@ services:
     command: sh run_commands.sh
     depends_on: 
       - redis
-  users-queries:
-    volumes:
-        - ./usuarios/:/mnt/
-    build: ./usuarios
-    working_dir: /backend/
-    command: sh run_queries.sh
-    depends_on: 
-      - redis
-
   nginx:
     image: nginx:latest
     ports:
