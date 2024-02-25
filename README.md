@@ -24,6 +24,8 @@ Un sistema de monitoreo que permite visualizar el estado del servidor en tiempo 
 - SQLite
 - Postman
 - Jmeter
+- Uptrace
+- opentelemetry-instrumentation
 
 ## Instalación
 
@@ -112,4 +114,4 @@ Se pueden hacer peticiones desde postman o jmeter y validar resultado en la base
 
 El estado del servidor se puede visualizar en tiempo real en el sistema de monitoreo. Para acceder al sistema de monitoreo se debe ingresar a la url: http://localhost:8080/nginx_status
 
-
+Para acceder al sistema de monitoreo externo se debe acceder a la url: https://app.uptrace.dev/overview/3283/systems?time_gte=20240225T141800&time_dur=4320&system=spans%3Aall&query=
