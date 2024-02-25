@@ -20,7 +20,7 @@ tracer = trace.get_tracer("flaskr", "1.0.0")
 
 @celery_app.task(name='signin_task', autoretry_for=(Exception,), retry_backoff=True, max_retries=2)
 def signin_task(usuario, password, nombre, telefono, correo):
-    app = create_app('default')
+    app = create_app()
     db.init_app(app)
     user_info = None
     with app.app_context():

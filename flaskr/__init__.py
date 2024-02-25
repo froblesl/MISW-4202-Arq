@@ -12,7 +12,7 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA journal_mode=WAL")
     cursor.close()
 
-def create_app(config_name):
+def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///login.db?mode=locking=normal'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

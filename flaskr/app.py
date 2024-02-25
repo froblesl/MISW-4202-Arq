@@ -13,7 +13,7 @@ from opentelemetry.sdk.trace.export import (
 
 import uptrace
 
-app = create_app('default')
+app = create_app()
 app_context = app.app_context()
 app_context.push()
 
