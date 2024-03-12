@@ -2,8 +2,9 @@
 
 from flaskr import create_app
 from flask_restful import Api
-from flaskr.vistas import VistaSignIn
+from flaskr.vistas import VistaSignInEntrenador, VistaSignInDeportista
 from flaskr.modelos import db
+from flaskr.vistas.vistas import VistaAsignarDeportistaEntrenador, VistaConsultarDeportistasPorEntrenador
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import (
@@ -22,7 +23,10 @@ db.init_app(app)
 db.create_all()
 
 api = Api(app)
-api.add_resource(VistaSignIn, '/signin')
+api.add_resource(VistaSignInEntrenador, '/signinEntrenador')
+api.add_resource(VistaSignInDeportista, '/signinDeportista')
+api.add_resource(VistaAsignarDeportistaEntrenador, '/asignarDeportista')
+api.add_resource(VistaConsultarDeportistasPorEntrenador, '/consultarDeportistasPorEntrenador/<int:id_entrenador>')
 
 provider = TracerProvider()
 processor = BatchSpanProcessor(ConsoleSpanExporter())
