@@ -11,10 +11,15 @@ from opentelemetry.sdk.trace.export import (
     BatchSpanProcessor,
     ConsoleSpanExporter,
 )
+from flask_jwt_extended import JWTManager
 
 import uptrace
 
 app = create_app()
+app.config['JWT_SECRET_KEY'] = 'tu-clave-secreta'  # Reemplaza esto con tu propia clave secreta
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
+jwt = JWTManager(app)
+
 app_context = app.app_context()
 app_context.push()
 
@@ -36,9 +41,6 @@ provider.add_span_processor(processor)
 trace.get_tracer_provider()
 
 # Creates a tracer from the global tracer provider
-
-# app.py
-
 
 uptrace.configure_opentelemetry(
     dsn="https://oOcNZLnu7znxC_ENmcx9og@api.uptrace.dev?grpc=4317",

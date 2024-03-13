@@ -6,6 +6,7 @@ from datetime import datetime
 from celery import Celery
 from ..tasks import signinEntrenador_task, signinDeportista_task
 from sqlalchemy import and_
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 
 from opentelemetry import trace
 from flaskr.tracer import tracer  # Importa el tracer de tracer.py
@@ -58,9 +59,30 @@ class VistaAsignarDeportistaEntrenador(Resource):
         
         return {"mensaje": "Deportista asignado a entrenador"}, 200
 
+class VistaLogin(Resource):
+    def post(self):
+        usuario = request.json.get('usuario')
+        password = request.json.get('password')
+        rol = request.json.get('rol')
+        usuario = db.session.query(Usuario).filter(Usuario.usuario == usuario and Usuario.rol == rol).first()
+        if usuario is None:
+            return {"mensaje": "Usuario no existe"}, 404
+        if usuario.password != password:
+            return {"mensaje": "Contraseña incorrecta"}, 401
+        
+        access_token = create_access_token(identity=usuario.i, additional_claims={"rol": usuario.rol})
+        return {"mensaje": "Usuario autenticado", "access_token": access_token}, 200
+
+
 class VistaConsultarDeportistasPorEntrenador(Resource):
-    def get(self, id_entrenador):
-        # Verifica que el entrenador exista y tiene deportistas asociados directamente en la consulta
+    @jwt_required()
+    def get(self, id_entrenador):    
+        jwt = get_jwt()
+
+        # Verifica el rol del usuario
+        if jwt["rol"] != "ENTRENADOR":
+            return {"mensaje": "No tienes permiso para acceder a esta ruta"}, 403
+
         deportistas = db.session.query(Deportista).join(
             deportistas_entrenadores,
             and_(
