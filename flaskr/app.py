@@ -4,7 +4,7 @@ from flaskr import create_app
 from flask_restful import Api
 from flaskr.vistas import VistaSignInEntrenador, VistaSignInDeportista
 from flaskr.modelos import db
-from flaskr.vistas.vistas import VistaAsignarDeportistaEntrenador, VistaConsultarDeportistasPorEntrenador
+from flaskr.vistas.vistas import VistaAsignarDeportistaEntrenador, VistaConsultarDeportistasPorEntrenador, VistaLogin
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import (
@@ -16,7 +16,7 @@ from flask_jwt_extended import JWTManager
 import uptrace
 
 app = create_app()
-app.config['JWT_SECRET_KEY'] = 'tu-clave-secreta'  # Reemplaza esto con tu propia clave secreta
+app.config['JWT_SECRET_KEY'] = 'd3b1149cebbc40bbf20fd74cf32cde34389f21f3a4cfc962a384d526bcadd264'  # Reemplaza esto con tu propia clave secreta
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 jwt = JWTManager(app)
 
@@ -32,6 +32,7 @@ api.add_resource(VistaSignInEntrenador, '/signinEntrenador')
 api.add_resource(VistaSignInDeportista, '/signinDeportista')
 api.add_resource(VistaAsignarDeportistaEntrenador, '/asignarDeportista')
 api.add_resource(VistaConsultarDeportistasPorEntrenador, '/consultarDeportistasPorEntrenador/<int:id_entrenador>')
+api.add_resource(VistaLogin, '/login')
 
 provider = TracerProvider()
 processor = BatchSpanProcessor(ConsoleSpanExporter())

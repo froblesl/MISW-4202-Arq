@@ -48,6 +48,8 @@ class UsuarioSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Usuario
         load_instance = True
+        
+usuario_schema = UsuarioSchema(many=True)
 
 class DeportistaSchema(SQLAlchemyAutoSchema):
     class Meta:

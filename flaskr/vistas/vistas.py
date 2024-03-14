@@ -70,7 +70,7 @@ class VistaLogin(Resource):
         if usuario.password != password:
             return {"mensaje": "Contraseña incorrecta"}, 401
         
-        access_token = create_access_token(identity=usuario.i, additional_claims={"rol": usuario.rol})
+        access_token = create_access_token(identity=usuario.id, additional_claims={"rol": usuario.rol.name})
         return {"mensaje": "Usuario autenticado", "access_token": access_token}, 200
 
 
