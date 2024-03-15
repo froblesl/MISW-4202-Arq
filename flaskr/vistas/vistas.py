@@ -1,5 +1,7 @@
 import base64
 from flask import request, json, Response,jsonify
+
+from flaskr.modelos.modelos import Entrenador
 from ..modelos import db, Usuario, UsuarioSchema, deportistas_entrenadores, Deportista, deportista_schema
 from flask_restful import Resource
 from datetime import datetime, timedelta
@@ -61,34 +63,43 @@ class VistaAsignarDeportistaEntrenador(Resource):
 
 class VistaLogin(Resource):
     def post(self):
-        usuario = request.json.get('usuario')
-        password = request.json.get('password')
-        rol = request.json.get('rol')
-        usuario = db.session.query(Usuario).filter(Usuario.usuario == usuario and Usuario.rol == rol).first()
-        if usuario is None:
-            return {"mensaje": "Usuario no existe"}, 404
-        if usuario.password != password:
-            return {"mensaje": "Contraseña incorrecta"}, 401
-        
-        access_token = create_access_token(identity=usuario.id, additional_claims={"rol": usuario.rol.name}, expires_delta=timedelta(seconds=40)) 
-        return {"mensaje": "Usuario autenticado", "access_token": access_token}, 200
+        tracer_provider = trace.get_tracer_provider()
+        tracer = tracer_provider.get_tracer(__name__)
+        with tracer.start_as_current_span('Login'):
+            usuario = request.json.get('usuario')
+            password = request.json.get('password')
+            rol = request.json.get('rol')
+            usuario = db.session.query(Usuario).filter(Usuario.usuario == usuario and Usuario.rol == rol).first()
+            if usuario is None:
+                return {"mensaje": "Usuario no existe"}, 404
+            if usuario.password != password:
+                return {"mensaje": "Contraseña incorrecta"}, 401
+            
+            access_token = create_access_token(identity=usuario.id, additional_claims={"rol": usuario.rol.name, "usuario": usuario.usuario}, expires_delta=timedelta(seconds=40)) 
+            return {"mensaje": "Usuario autenticado", "access_token": access_token}, 200
 
 
 class VistaConsultarDeportistasPorEntrenador(Resource):
     @jwt_required()
-    def get(self, id_entrenador):    
-        jwt = get_jwt()
+    def get(self, id_entrenador):
+        tracer_provider = trace.get_tracer_provider()
+        tracer = tracer_provider.get_tracer(__name__)
+        with tracer.start_as_current_span('Informacion_usuario'):    
+            jwt = get_jwt()
+            usuario = db.session.query(Entrenador).filter(Entrenador.id == id_entrenador).first()
+            id_usuario = db.session.query(Usuario).filter(Usuario.id == usuario.usuario_id).first()
+            if jwt["usuario"] != id_usuario.usuario:
+                return {"mensaje": "No tienes permiso para acceder a esta ruta"}, 403
+            # Verifica el rol del usuario
+            if jwt["rol"] != "ENTRENADOR":
+                return {"mensaje": "No tienes permiso para acceder a esta ruta"}, 403
 
-        # Verifica el rol del usuario
-        if jwt["rol"] != "ENTRENADOR":
-            return {"mensaje": "No tienes permiso para acceder a esta ruta"}, 403
-
-        deportistas = db.session.query(Deportista).join(
-            deportistas_entrenadores,
-            and_(
-                deportistas_entrenadores.c.deportista_id == Deportista.id,
-                deportistas_entrenadores.c.entrenador_id == id_entrenador
-            )
-        ).all()
-        print(deportistas)
-        return deportista_schema.dump(deportistas)
+            deportistas = db.session.query(Deportista).join(
+                deportistas_entrenadores,
+                and_(
+                    deportistas_entrenadores.c.deportista_id == Deportista.id,
+                    deportistas_entrenadores.c.entrenador_id == id_entrenador
+                )
+            ).all()
+            print(deportistas)
+            return deportista_schema.dump(deportistas)
