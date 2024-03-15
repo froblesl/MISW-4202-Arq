@@ -2,7 +2,7 @@ import base64
 from flask import request, json, Response,jsonify
 from ..modelos import db, Usuario, UsuarioSchema, deportistas_entrenadores, Deportista, deportista_schema
 from flask_restful import Resource
-from datetime import datetime
+from datetime import datetime, timedelta
 from celery import Celery
 from ..tasks import signinEntrenador_task, signinDeportista_task
 from sqlalchemy import and_
@@ -70,7 +70,7 @@ class VistaLogin(Resource):
         if usuario.password != password:
             return {"mensaje": "Contraseña incorrecta"}, 401
         
-        access_token = create_access_token(identity=usuario.id, additional_claims={"rol": usuario.rol.name})
+        access_token = create_access_token(identity=usuario.id, additional_claims={"rol": usuario.rol.name}, expires_delta=timedelta(seconds=40)) 
         return {"mensaje": "Usuario autenticado", "access_token": access_token}, 200
 
 
