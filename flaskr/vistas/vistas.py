@@ -1,4 +1,5 @@
 import base64
+import logging
 from flask import request, json, Response,jsonify
 
 from flaskr.modelos.modelos import Entrenador
@@ -80,18 +81,20 @@ class VistaLogin(Resource):
 
 
 class VistaConsultarDeportistasPorEntrenador(Resource):
-    @jwt_required()
-    def get(self, id_entrenador):
-        tracer_provider = trace.get_tracer_provider()
-        tracer = tracer_provider.get_tracer(__name__)
-        with tracer.start_as_current_span('Informacion_usuario'):    
+    tracer_provider = trace.get_tracer_provider()
+    tracer = tracer_provider.get_tracer(__name__)
+    with tracer.start_as_current_span('Informacion_usuario'): 
+        @jwt_required()
+        def get(self, id_entrenador):
             jwt = get_jwt()
             usuario = db.session.query(Entrenador).filter(Entrenador.id == id_entrenador).first()
             id_usuario = db.session.query(Usuario).filter(Usuario.id == usuario.usuario_id).first()
+            logger = logging.getLogger(__name__)
             if jwt["usuario"] != id_usuario.usuario:
-                return {"mensaje": "No tienes permiso para acceder a esta ruta"}, 403
+                    return {"mensaje": "No tienes permiso para acceder a esta ruta"}, 403
             # Verifica el rol del usuario
             if jwt["rol"] != "ENTRENADOR":
+                logger.error("La solicitud de registro entrenador ha sido enviada y se está procesando.")
                 return {"mensaje": "No tienes permiso para acceder a esta ruta"}, 403
 
             deportistas = db.session.query(Deportista).join(
